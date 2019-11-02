@@ -119,7 +119,7 @@ while True:
   #cv2.waitKey(1);
 
 
-  print "Contornos encontrados: "+str(QtdeContornos)
+  print("Contornos encontrados: "+str(QtdeContornos))
 
   #Escreve na imagem o numero de pessoas que entraram ou sairam da area vigiada
   cv2.putText(Frame, "Entradas: {}".format(str(ContadorEntradas)), (10, 50),
