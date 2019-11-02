@@ -109,7 +109,6 @@ while True:
     #dessa forma, contabiliza-se quais contornos cruzaram quais linhas (num determinado sentido)
 	if (TestaInterseccaoEntrada(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):
     ContadorEntradas += 1
-
 	if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
     ContadorSaidas += 1
 
