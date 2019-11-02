@@ -23,8 +23,7 @@ def TestaInterseccaoEntrada(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
 
 #Verifica se o corpo detectado esta saindo da sona monitorada
 def TestaInterseccaoSaida(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
-  DiferencaAbsoluta = abs(y - CoordenadaYLinhaSaida)	
-
+  DiferencaAbsoluta = abs(y - CoordenadaYLinhaSaida)
 	if ((DiferencaAbsoluta <= 2) and (y > CoordenadaYLinhaEntrada)):
 		return 1
 	else:
