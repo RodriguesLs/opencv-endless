@@ -87,7 +87,7 @@ while True:
   for c in cnts:
     #contornos de area muto pequena sao ignorados.
     if cv2.contourArea(c) < AreaContornoLimiteMin:
-        continue
+      continue
 
     #Para fins de depuracao, contabiliza numero de contornos encontrados
     QtdeContornos = QtdeContornos+1    
@@ -107,10 +107,10 @@ while True:
     
     #testa interseccao dos centros dos contornos com as linhas de referencia
     #dessa forma, contabiliza-se quais contornos cruzaram quais linhas (num determinado sentido)
-      if (TestaInterseccaoEntrada(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):
-        ContadorEntradas += 1
-	    if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
-        ContadorSaidas += 1
+    if (TestaInterseccaoEntrada(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):
+      ContadorEntradas += 1
+    if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
+      ContadorSaidas += 1
 
   #Se necessario, descomentar as lihas abaixo para mostrar os frames utilizados no processamento da imagem
   #cv2.imshow("Frame binarizado", FrameThresh)
