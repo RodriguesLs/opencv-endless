@@ -2,6 +2,7 @@ import datetime
 import math
 import cv2
 import numpy as np
+from person import Person
 
 #variaveis globais
 width = 0
@@ -11,6 +12,21 @@ ContadorSaidas = 0
 AreaContornoLimiteMin = 3000  #este valor eh empirico. Ajuste-o conforme sua necessidade 
 ThresholdBinarizacao = 70  #este valor eh empirico, Ajuste-o conforme sua necessidade
 OffsetLinhasRef = 150  #este valor eh empirico. Ajuste- conforme sua necessidade.
+object_list = []
+counter = 0
+
+def searchOnList(localization, object_list):
+  x1, y1, x2, y2 = localization
+  cx = (x1 + x2) // 2
+  cy = (y1 + y2) // 2
+
+  for i, person in enumerate(object_list):
+    ox1, oy1, ox2, oy2 = person.localization
+    
+    if (ox1 <= cx <= ox2) and (oy1 <= cy <= oy2):
+      return i
+  
+  return None
 
 #Verifica se o corpo detectado esta entrando da sona monitorada
 def TestaInterseccaoEntrada(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
@@ -83,7 +99,8 @@ while True:
   cv2.line(Frame, (0,CoordenadaYLinhaSaida), (width,CoordenadaYLinhaSaida), (0, 0, 255), 2)
 
 
-    #Varre todos os contornos encontrados
+  new_list = []
+  #Varre todos os contornos encontrados
   for c in cnts:
     #contornos de area muto pequena sao ignorados.
     if cv2.contourArea(c) < AreaContornoLimiteMin:
@@ -94,8 +111,25 @@ while True:
 
     #obtem coordenadas do contorno (na verdade, de um retangulo que consegue abrangir todo ocontorno) e
     #realca o contorno com um retangulo.
+    
     (x, y, w, h) = cv2.boundingRect(c) #x e y: coordenadas do vertice superior esquerdo
                                         #w e h: respectivamente largura e altura do retangulo
+    locale = (x, y, w, h)
+
+    temp_id = searchOnList(locale, object_list)
+
+
+    if temp_id is None:
+      counter += 1
+      p = Person(counter)
+      p.update_location(locale)
+      new_list.append(p)
+
+    else:
+      object_list[temp_id].update_location(locale)
+      new_list.append(object_list[temp_id])
+
+
 
     cv2.rectangle(Frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
@@ -111,7 +145,9 @@ while True:
       ContadorEntradas += 1
     if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
       ContadorSaidas += 1
+  
 
+  object_list = new_list
   #Se necessario, descomentar as lihas abaixo para mostrar os frames utilizados no processamento da imagem
   #cv2.imshow("Frame binarizado", FrameThresh)
   #cv2.waitKey(1);
