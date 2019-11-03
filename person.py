@@ -1,6 +1,6 @@
 class Person():
-  id
-  localization
+  id = None
+  localization = None
 
   def __init__(self, id):
     self.id = id

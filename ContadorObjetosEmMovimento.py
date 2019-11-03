@@ -122,7 +122,7 @@ while True:
     if temp_id is None:
       counter += 1
       p = Person(counter)
-      p.update_location(locale)
+      p.update_localization(locale)
       new_list.append(p)
 
     else:
