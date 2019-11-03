@@ -21,9 +21,9 @@ def searchOnList(localization, object_list):
   cy = (y1 + y2) // 2
 
   for i, person in enumerate(object_list):
-    ox1, oy1, ox2, oy2 = person.localization
+    x1, y1, x2, y2 = person.localization
     
-    if (ox1 <= cx <= ox2) and (oy1 <= cy <= oy2):
+    if (x1 <= cx <= x2) and (y1 <= cy <= y2):
       return i
   
   return None
@@ -123,6 +123,7 @@ while True:
       counter += 1
       p = Person(counter)
       p.update_localization(locale)
+      p.checked = true
       new_list.append(p)
 
     else:
@@ -142,9 +143,12 @@ while True:
     #testa interseccao dos centros dos contornos com as linhas de referencia
     #dessa forma, contabiliza-se quais contornos cruzaram quais linhas (num determinado sentido)
     if (TestaInterseccaoEntrada(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):
-      ContadorEntradas += 1
-    if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
-      ContadorSaidas += 1
+      if p.checked is true:
+        ContadorEntradas += 1
+        p.checked = false
+      
+    # if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
+    #   ContadorSaidas += 1
   
 
   object_list = new_list
