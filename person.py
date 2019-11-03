@@ -1,7 +1,7 @@
 class Person():
   id = None
   localization = None
-  checked = false
+  checked = False
 
   def __init__(self, id):
     self.id = id

@@ -123,11 +123,11 @@ while True:
       counter += 1
       p = Person(counter)
       p.update_localization(locale)
-      p.checked = true
+      p.checked = True
       new_list.append(p)
 
     else:
-      object_list[temp_id].update_location(locale)
+      object_list[temp_id].update_localization(locale)
       new_list.append(object_list[temp_id])
 
 
@@ -135,17 +135,17 @@ while True:
     cv2.rectangle(Frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
     #determina o ponto central do contorno e desenha um circulo para indicar
-    CoordenadaXCentroContorno = (x+x+w)/2
-    CoordenadaYCentroContorno = (y+y+h)/2
+    CoordenadaXCentroContorno = (x+x+w)//2
+    CoordenadaYCentroContorno = (y+y+h)//2
     PontoCentralContorno = (CoordenadaXCentroContorno,CoordenadaYCentroContorno)
     cv2.circle(Frame, PontoCentralContorno, 1, (0, 0, 0), 5)
     
     #testa interseccao dos centros dos contornos com as linhas de referencia
     #dessa forma, contabiliza-se quais contornos cruzaram quais linhas (num determinado sentido)
     if (TestaInterseccaoEntrada(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):
-      if p.checked is true:
+      if p.checked is True:
         ContadorEntradas += 1
-        p.checked = false
+        p.checked = False
       
     # if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
     #   ContadorSaidas += 1
