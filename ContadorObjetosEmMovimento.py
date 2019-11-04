@@ -175,8 +175,9 @@ while True:
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.putText(Frame, "Temp_id: {}".format(str(temp_id)), (10, 90),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-  cv2.putText(Frame, "object_list: {}".format(str(object_list)), (10, 130),
-      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+  for i in object_list:
+    cv2.putText(Frame, "object_list: {}".format(str(object_list[i])), (10, 130),
+        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.putText(Frame, "counter: {}".format(str(counter)), (10, 150),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.imshow("Original", Frame)
