@@ -27,7 +27,7 @@ def searchOnList(localization, object_list):
     if localization is person.localization:
       return i
   
-  return None
+    return None
 
 #Verifica se o corpo detectado esta entrando da sona monitorada
 def TestaInterseccaoEntrada(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
