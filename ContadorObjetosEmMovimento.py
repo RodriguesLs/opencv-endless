@@ -6,6 +6,7 @@ import time
 from person import Person
 
 #variaveis globais
+temp_id = 0
 width = 0
 height = 0
 ContadorEntradas = 0
