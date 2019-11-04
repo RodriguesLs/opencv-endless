@@ -17,6 +17,7 @@ object_list = []
 temp_id = 0
 id = 0
 QtdeContornos = 0
+counter = 0
 
 def searchOnList(localization, object_list):
  x1, y1, x2, y2 = localization
