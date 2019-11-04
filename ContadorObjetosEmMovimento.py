@@ -162,8 +162,7 @@ while True:
   #cv2.waitKey(1);
 
 
-  t2 = time.time()
-  print("FPS: "+str(1.0/(t2-t)))
+  print("FPS: "+str(1.0/(time.time()-t)))
   print("Contornos encontrados: "+str(QtdeContornos))
 
   #Escreve na imagem o numero de pessoas que entraram ou sairam da area vigiada
@@ -175,7 +174,7 @@ while True:
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.putText(Frame, "object_list: {}".format(str(object_list)), (10, 130),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-  cv2.putText(Frame, "counter: {}".format(str(counter)), (10, 130),
+  cv2.putText(Frame, "counter: {}".format(str(counter)), (10, 150),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.imshow("Original", Frame)
   cv2.waitKey(1);
