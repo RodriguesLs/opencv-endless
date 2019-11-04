@@ -15,8 +15,6 @@ AreaContornoLimiteMin = 3000  #este valor eh empirico. Ajuste-o conforme sua nec
 ThresholdBinarizacao = 70  #este valor eh empirico, Ajuste-o conforme sua necessidade
 OffsetLinhasRef = 150  #este valor eh empirico. Ajuste- conforme sua necessidade.
 object_list = []
-counter = 0
-x = 0
 id = 0
 QtdeContornos = 0
 
@@ -74,7 +72,7 @@ while True:
 
   #se nao foi possivel obter frame, nada mais deve ser feito
   if not grabbed:
-      break
+    break
 
   #converte frame para escala de cinza e aplica efeito blur (para realcar os contornos)
   FrameGray = cv2.cvtColor(Frame, cv2.COLOR_BGR2GRAY)
@@ -95,7 +93,6 @@ while True:
   #Alem disso, encontra os contornos apos dilatacao.
   FrameThresh = cv2.dilate(FrameThresh, None, iterations=2)
   _, cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-  x = QtdeContornos
   QtdeContornos = 0
 
   #desenha linhas de referencia 
@@ -119,23 +116,7 @@ while True:
     
     (x, y, w, h) = cv2.boundingRect(c) #x e y: coordenadas do vertice superior esquerdo
                                         #w e h: respectivamente largura e altura do retangulo
-    locale = (x, y, w, h)
-
-
-    #if QtdeContornos > 0:
-    temp_id = searchOnList(locale, object_list)
-      
-    if temp_id is None:
-#        counter += 1
-      id += 1
-      p = Person(id)
-      p.update_localization(locale)
-      new_list.append(p)
-    else:
-      object_list[temp_id].update_localization(locale)
-      new_list.append(object_list[temp_id])
-
-
+    locale = cv2.boundingRect(c)
 
     cv2.rectangle(Frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
@@ -148,11 +129,19 @@ while True:
     #testa interseccao dos centros dos contornos com as linhas de referencia
     #dessa forma, contabiliza-se quais contornos cruzaram quais linhas (num determinado sentido)
     if (TestaInterseccaoEntrada(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):
-      print("P.checked", p.checked)
-      if p.checked is False:
-        ContadorEntradas += 1
-        p.checked = True
+      ContadorEntradas += 1
       
+      temp_id = searchOnList(locale, object_list)
+      
+      if temp_id is None:
+        id += 1
+        p = Person(id)
+        p.update_localization(locale)
+        new_list.append(p)
+      else:
+        object_list[temp_id].update_localization(locale)
+        new_list.append(object_list[temp_id])
+
     # if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
     #   ContadorSaidas += 1
   
@@ -176,7 +165,7 @@ while True:
   cv2.putText(Frame, "Temp_id: {}".format(str(temp_id)), (10, 90),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   for i in object_list:
-    cv2.putText(Frame, "object_list: {}".format(str(object_list) + " - " + str(i.id)), (10, 130),
+    cv2.putText(Frame, "object_list: {}".format(str(i.id)), (10, 130),
         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.putText(Frame, "counter: {}".format(str(counter)), (10, 150),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
