@@ -145,6 +145,7 @@ while True:
     #testa interseccao dos centros dos contornos com as linhas de referencia
     #dessa forma, contabiliza-se quais contornos cruzaram quais linhas (num determinado sentido)
     if (TestaInterseccaoEntrada(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):
+      print("P.checked", p.checked)
       if p.checked is False:
         ContadorEntradas += 1
         p.checked = True
@@ -162,7 +163,7 @@ while True:
 
 
   t2 = time.time()
-  print("FPS: "+str(1/(t+t2)))
+  print("FPS: "+str(1/(t-t2)))
   print("Contornos encontrados: "+str(QtdeContornos))
 
   #Escreve na imagem o numero de pessoas que entraram ou sairam da area vigiada
@@ -171,8 +172,6 @@ while True:
   cv2.putText(Frame, "Saidas: {}".format(str(ContadorSaidas)), (10, 70),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.putText(Frame, "Temp_id: {}".format(str(temp_id)), (10, 90),
-      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-  cv2.putText(Frame, "p.checked: {}".format(str(p.checked)), (10, 110),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.putText(Frame, "object_list: {}".format(str(object_list)), (10, 130),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
