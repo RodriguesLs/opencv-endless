@@ -12,7 +12,7 @@ ContadorEntradas = 0
 ContadorSaidas = 0
 AreaContornoLimiteMin = 3000  #este valor eh empirico. Ajuste-o conforme sua necessidade 
 ThresholdBinarizacao = 70  #este valor eh empirico, Ajuste-o conforme sua necessidade
-OffsetLinhasRef = 150  #este valor eh empirico. Ajuste- conforme sua necessidade.
+OffsetLinhasRef = 100  #este valor eh empirico. Ajuste- conforme sua necessidade.
 object_list = []
 temp_id = 0
 id = 0
@@ -25,7 +25,7 @@ def searchOnList(localization, object_list):
   cy = (y1 + y2) // 2
 
   for i, person in enumerate(object_list):
-    
+    print("Object: " + object_list)
     if (x1, y1, x2, y2) is person.localization:
       print("i: "+str(i))
       return i
