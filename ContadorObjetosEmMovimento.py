@@ -19,8 +19,8 @@ counter = 0
 
 def searchOnList(localization, object_list):
   # x1, y1, x2, y2 = localization
-  cx = (x1 + x2) // 2
-  cy = (y1 + y2) // 2
+#  cx = (x1 + x2) // 2
+#  cy = (y1 + y2) // 2
 
   for i, person in enumerate(object_list):
     
