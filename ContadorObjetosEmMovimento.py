@@ -5,8 +5,7 @@ import numpy as np
 import time
 from person import Person
 
-#variaveis globais
-temp_id = 0
+#Global variables
 width = 0
 height = 0
 ContadorEntradas = 0
@@ -15,6 +14,7 @@ AreaContornoLimiteMin = 3000  #este valor eh empirico. Ajuste-o conforme sua nec
 ThresholdBinarizacao = 70  #este valor eh empirico, Ajuste-o conforme sua necessidade
 OffsetLinhasRef = 150  #este valor eh empirico. Ajuste- conforme sua necessidade.
 object_list = []
+temp_id = 0
 id = 0
 QtdeContornos = 0
 
@@ -118,6 +118,18 @@ while True:
                                         #w e h: respectivamente largura e altura do retangulo
     locale = cv2.boundingRect(c)
 
+    temp_id = searchOnList(locale, object_list)
+      
+    if temp_id is None:
+      id += 1
+      p = Person(id)
+      p.update_localization(locale)
+      new_list.append(p)
+    else:
+      object_list[temp_id].update_localization(locale)
+      new_list.append(object_list[temp_id])
+
+
     cv2.rectangle(Frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
     #determina o ponto central do contorno e desenha um circulo para indicar
@@ -129,18 +141,10 @@ while True:
     #testa interseccao dos centros dos contornos com as linhas de referencia
     #dessa forma, contabiliza-se quais contornos cruzaram quais linhas (num determinado sentido)
     if (TestaInterseccaoEntrada(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):
-      ContadorEntradas += 1
-      
-      temp_id = searchOnList(locale, object_list)
-      
-      if temp_id is None:
-        id += 1
-        p = Person(id)
-        p.update_localization(locale)
-        new_list.append(p)
-      else:
-        object_list[temp_id].update_localization(locale)
-        new_list.append(object_list[temp_id])
+      if p.checked is False:
+        ContadorEntradas += 1
+        p.checked = True
+    
 
     # if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
     #   ContadorSaidas += 1
