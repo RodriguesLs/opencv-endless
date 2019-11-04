@@ -16,6 +16,8 @@ ThresholdBinarizacao = 70  #este valor eh empirico, Ajuste-o conforme sua necess
 OffsetLinhasRef = 150  #este valor eh empirico. Ajuste- conforme sua necessidade.
 object_list = []
 counter = 0
+x = 0
+QtdeContornos = 0
 
 def searchOnList(localization, object_list):
   # x1, y1, x2, y2 = localization
@@ -91,7 +93,7 @@ while True:
   #Alem disso, encontra os contornos apos dilatacao.
   FrameThresh = cv2.dilate(FrameThresh, None, iterations=2)
   _, cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+  x = QtdeContornos
   QtdeContornos = 0
 
   #desenha linhas de referencia 
@@ -110,8 +112,6 @@ while True:
 
     #Para fins de depuracao, contabiliza numero de contornos encontrados
     QtdeContornos = QtdeContornos+1
-    x = QtdeContornos + x
-
     #obtem coordenadas do contorno (na verdade, de um retangulo que consegue abrangir todo ocontorno) e
     #realca o contorno com um retangulo.
     
@@ -120,17 +120,17 @@ while True:
     locale = (x, y, w, h)
 
 
-    if x >= QtdeContornos:
-      temp_id = searchOnList(locale, object_list)
+    #if QtdeContornos > 0:
+    temp_id = searchOnList(locale, object_list)
       
-      if temp_id is None:
-        counter += 1
-        p = Person(counter)
-        p.update_localization(locale)
-        new_list.append(p)
-      else:
-        object_list[temp_id].update_localization(locale)
-        new_list.append(object_list[temp_id])
+    if temp_id is None:
+#        counter += 1
+      p = Person(QtdeContornos)
+      p.update_localization(locale)
+      new_list.append(p)
+    else:
+      object_list[temp_id].update_localization(locale)
+      new_list.append(object_list[temp_id])
 
 
 
