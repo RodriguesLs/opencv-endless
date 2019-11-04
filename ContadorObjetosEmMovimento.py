@@ -109,7 +109,8 @@ while True:
       continue
 
     #Para fins de depuracao, contabiliza numero de contornos encontrados
-    QtdeContornos = QtdeContornos+1    
+    QtdeContornos = QtdeContornos+1
+    x = QtdeContornos + x
 
     #obtem coordenadas do contorno (na verdade, de um retangulo que consegue abrangir todo ocontorno) e
     #realca o contorno com um retangulo.
@@ -118,18 +119,18 @@ while True:
                                         #w e h: respectivamente largura e altura do retangulo
     locale = (x, y, w, h)
 
-    temp_id = searchOnList(locale, object_list)
 
-
-    if temp_id is None:
-      counter += 1
-      p = Person(counter)
-      p.update_localization(locale)
-      new_list.append(p)
-
-    else:
-      object_list[temp_id].update_localization(locale)
-      new_list.append(object_list[temp_id])
+    if x >= QtdeContornos:
+      temp_id = searchOnList(locale, object_list)
+      
+      if temp_id is None:
+        counter += 1
+        p = Person(counter)
+        p.update_localization(locale)
+        new_list.append(p)
+      else:
+        object_list[temp_id].update_localization(locale)
+        new_list.append(object_list[temp_id])
 
 
 
