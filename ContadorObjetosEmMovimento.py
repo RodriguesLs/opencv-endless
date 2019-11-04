@@ -19,16 +19,16 @@ id = 0
 QtdeContornos = 0
 
 def searchOnList(localization, object_list):
-  # x1, y1, x2, y2 = localization
-#  cx = (x1 + x2) // 2
-#  cy = (y1 + y2) // 2
+ x1, y1, x2, y2 = localization
+ cx = (x1 + x2) // 2
+ cy = (y1 + y2) // 2
 
   for i, person in enumerate(object_list):
     
-    if localization is person.localization:
+    if (x1, y1, x2, y2) is person.localization:
       print("i: "+str(i))
       return i
-  
+
     return None
 
 #Verifica se o corpo detectado esta entrando da sona monitorada
