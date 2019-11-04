@@ -17,6 +17,7 @@ OffsetLinhasRef = 150  #este valor eh empirico. Ajuste- conforme sua necessidade
 object_list = []
 counter = 0
 x = 0
+id = 0
 QtdeContornos = 0
 
 def searchOnList(localization, object_list):
@@ -27,6 +28,7 @@ def searchOnList(localization, object_list):
   for i, person in enumerate(object_list):
     
     if localization is person.localization:
+      print("i: "+str(i))
       return i
   
     return None
@@ -125,7 +127,8 @@ while True:
       
     if temp_id is None:
 #        counter += 1
-      p = Person(QtdeContornos)
+      id += 1
+      p = Person(id)
       p.update_localization(locale)
       new_list.append(p)
     else:
@@ -172,7 +175,7 @@ while True:
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.putText(Frame, "Temp_id: {}".format(str(temp_id)), (10, 90),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-  cv2.putText(Frame, "object_list: {}".format(str(object_list)), (10, 130),
+  cv2.putText(Frame, "object_list: {}".format(str(object_list.id)), (10, 130),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.putText(Frame, "counter: {}".format(str(counter)), (10, 150),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
