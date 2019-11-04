@@ -126,7 +126,7 @@ while True:
       new_list.append(p)
 
     else:
-      object_list[temp_id].update_location(locale)
+      object_list[temp_id].update_localization(locale)
       new_list.append(object_list[temp_id])
 
 
@@ -134,8 +134,8 @@ while True:
     cv2.rectangle(Frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
     #determina o ponto central do contorno e desenha um circulo para indicar
-    CoordenadaXCentroContorno = (x+x+w)/2
-    CoordenadaYCentroContorno = (y+y+h)/2
+    CoordenadaXCentroContorno = (x+x+w)//2
+    CoordenadaYCentroContorno = (y+y+h)//2
     PontoCentralContorno = (CoordenadaXCentroContorno,CoordenadaYCentroContorno)
     cv2.circle(Frame, PontoCentralContorno, 1, (0, 0, 0), 5)
     
