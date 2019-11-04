@@ -18,14 +18,13 @@ object_list = []
 counter = 0
 
 def searchOnList(localization, object_list):
-  x1, y1, x2, y2 = localization
+  # x1, y1, x2, y2 = localization
   cx = (x1 + x2) // 2
   cy = (y1 + y2) // 2
 
   for i, person in enumerate(object_list):
-    x1, y1, x2, y2 = person.localization
     
-    if (x1 <= cx <= x2) and (y1 <= cy <= y2):
+    if localization is person.localization:
       return i
   
   return None
