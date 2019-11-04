@@ -2,6 +2,7 @@ import datetime
 import math
 import cv2
 import numpy as np
+import time
 from person import Person
 
 #variaveis globais
@@ -62,6 +63,7 @@ for i in range(0,20):
 
 while True:
   #le primeiro frame e determina resolucao da imagem
+  t = time.time()
   (grabbed, Frame) = camera.read()
   height = np.size(Frame,0)
   width = np.size(Frame,1)
@@ -158,12 +160,20 @@ while True:
   #cv2.waitKey(1);
 
 
+  t2 = time.time()
+  print("FPS: "+str(1/(t+t2)))
   print("Contornos encontrados: "+str(QtdeContornos))
 
   #Escreve na imagem o numero de pessoas que entraram ou sairam da area vigiada
   cv2.putText(Frame, "Entradas: {}".format(str(ContadorEntradas)), (10, 50),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (250, 0, 1), 2)
   cv2.putText(Frame, "Saidas: {}".format(str(ContadorSaidas)), (10, 70),
+      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+  cv2.putText(Frame, "Temp_id: {}".format(str(temp_id)), (10, 90),
+      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+  cv2.putText(Frame, "p.checked: {}".format(str(p.checked)), (10, 110),
+      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+  cv2.putText(Frame, "object_list: {}".format(str(object_list)), (10, 130),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.imshow("Original", Frame)
   cv2.waitKey(1);
