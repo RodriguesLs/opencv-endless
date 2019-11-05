@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import time
 from person import Person
+# from centroidtracker import CentroidTraceker
 
 #Global variables
 width = 0
@@ -12,12 +13,15 @@ ContadorEntradas = 0
 ContadorSaidas = 0
 AreaContornoLimiteMin = 3000  #este valor eh empirico. Ajuste-o conforme sua necessidade 
 ThresholdBinarizacao = 70  #este valor eh empirico, Ajuste-o conforme sua necessidade
-OffsetLinhasRef = 100  #este valor eh empirico. Ajuste- conforme sua necessidade.
+OffsetLinhasRef = 130  #este valor eh empirico. Ajuste- conforme sua necessidade.
 object_list = []
 temp_id = 0
 id = 0
 QtdeContornos = 0
 counter = 0
+# ct = CentroidTracker()
+# (H, W) = (None, None)
+
 
 def searchOnList(localization, object_list):
   x1, y1, x2, y2 = localization
@@ -25,12 +29,16 @@ def searchOnList(localization, object_list):
   cy = (y1 + y2) // 2
 
   for i, person in enumerate(object_list):
-    print("Object: " + object_list)
-    if (x1, y1, x2, y2) is person.localization:
-      print("i: "+str(i))
+    print("person {}:".format(i))
+    (px1, py1, px2, py2) = person.localization
+    print(px1, cx, px2)
+    print(py1, cy, py2)
+
+    if (px1 <= cx <= px2) and (py1 <= cy <= py2):
+      print("ENTROU")
       return i
 
-    return None
+  return None
 
 #Verifica se o corpo detectado esta entrando da sona monitorada
 def TestaInterseccaoEntrada(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
@@ -50,7 +58,7 @@ def TestaInterseccaoSaida(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
   else:
     return 0
 
-camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture("/home/rodrigues/Documents/people-counting/videos/test_video.h264")
 
 #forca a camera a ter resolucao 640x480
 camera.set(3,640)
@@ -65,9 +73,15 @@ for i in range(0,20):
   (grabbed, Frame) = camera.read()
 
 while True:
+  counter += 1
   #le primeiro frame e determina resolucao da imagem
   t = time.time()
   (grabbed, Frame) = camera.read()
+
+  if counter < 820:
+    continue
+  # Frame = cv2.imread("img_test.jpg")
+  # Frame = cv2.resize(Frame, (640, 480))
   height = np.size(Frame,0)
   width = np.size(Frame,1)
 
@@ -77,7 +91,14 @@ while True:
 
   #converte frame para escala de cinza e aplica efeito blur (para realcar os contornos)
   FrameGray = cv2.cvtColor(Frame, cv2.COLOR_BGR2GRAY)
-  FrameGray = cv2.GaussianBlur(FrameGray, (21, 21), 0)
+  cv2.imshow("gray", FrameGray)
+  # FrameGray = cv2.GaussianBlur(FrameGray, (21, 21), 0)
+  FrameGray = cv2.blur(FrameGray, (11, 11), 0)
+  cv2.imshow("gray2", FrameGray)
+
+  # if counter == 821:
+  #   import pdb; pdb.set_trace()
+
 
     #como a comparacao eh feita entre duas imagens subsequentes, se o primeiro frame eh nulo (ou seja, primeira "passada" no loop), este eh inicializado
   if PrimeiroFrame is None:
@@ -93,7 +114,7 @@ while True:
   #Dessa forma, objetos detectados serao considerados uma "massa" de cor preta 
   #Alem disso, encontra os contornos apos dilatacao.
   FrameThresh = cv2.dilate(FrameThresh, None, iterations=2)
-  _, cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+  cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
   QtdeContornos = 0
 
   #desenha linhas de referencia 
@@ -109,7 +130,7 @@ while True:
     #contornos de area muto pequena sao ignorados.
     if cv2.contourArea(c) < AreaContornoLimiteMin:
       continue
-
+    
     #Para fins de depuracao, contabiliza numero de contornos encontrados
     QtdeContornos = QtdeContornos+1
     #obtem coordenadas do contorno (na verdade, de um retangulo que consegue abrangir todo ocontorno) e
@@ -117,16 +138,18 @@ while True:
     
     (x, y, w, h) = cv2.boundingRect(c) #x e y: coordenadas do vertice superior esquerdo
                                         #w e h: respectivamente largura e altura do retangulo
-    locale = cv2.boundingRect(c)
+    locale = (x, y, x+w, y+h)
 
     temp_id = searchOnList(locale, object_list)
       
     if temp_id is None:
+      print("NEW")
       id += 1
       p = Person(id)
       p.update_localization(locale)
       new_list.append(p)
     else:
+      print("OLD")
       object_list[temp_id].update_localization(locale)
       new_list.append(object_list[temp_id])
 
@@ -152,10 +175,12 @@ while True:
   
 
   object_list = new_list
+  for pe in object_list:
+    print(pe.id)
   #Se necessario, descomentar as lihas abaixo para mostrar os frames utilizados no processamento da imagem
-  #cv2.imshow("Frame binarizado", FrameThresh)
-  #cv2.waitKey(1);
-  #cv2.imshow("Frame com subtracao de background", FrameDelta)
+  cv2.imshow("Frame binarizado", FrameThresh)
+  # cv2.waitKey(1);
+  cv2.imshow("Frame com subtracao de background", FrameDelta)
   #cv2.waitKey(1);
 
 
@@ -170,12 +195,18 @@ while True:
   cv2.putText(Frame, "Temp_id: {}".format(str(temp_id)), (10, 90),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   for i in object_list:
-    cv2.putText(Frame, "object_list: {}".format(str(i.id)), (10, 130),
+    cv2.putText(Frame, "object_list: {}".format(len(object_list)), (10, 130),
         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.putText(Frame, "counter: {}".format(str(counter)), (10, 150),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.imshow("Original", Frame)
-  cv2.waitKey(1);
+
+  cv2.putText(Frame, "counter: {}".format(counter), (20, 50),
+      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+  key = cv2.waitKey(1)
+
+  if key == ord('q'):
+    break
 
 # cleanup the camera and close any open windows
 camera.release()
