@@ -12,7 +12,7 @@ ContadorEntradas = 0
 ContadorSaidas = 0
 AreaContornoLimiteMin = 3000  #este valor eh empirico. Ajuste-o conforme sua necessidade 
 ThresholdBinarizacao = 70  #este valor eh empirico, Ajuste-o conforme sua necessidade
-OffsetLinhasRef = 10  #este valor eh empirico. Ajuste- conforme sua necessidade.
+OffsetLinhasRef = 30  #este valor eh empirico. Ajuste- conforme sua necessidade.
 object_list = []
 temp_id = 0
 QtdeContornos = 0
@@ -40,7 +40,7 @@ def searchOnList(localization, object_list):
 def TestaInterseccaoEntrada(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
   DiferencaAbsoluta = abs(y - CoordenadaYLinhaEntrada)	
 
-  if ((DiferencaAbsoluta <= 5) and (y < CoordenadaYLinhaSaida)):
+  if ((DiferencaAbsoluta <= 3) and (y < CoordenadaYLinhaSaida)):
     return 1
   else:
     return 0
@@ -49,7 +49,7 @@ def TestaInterseccaoEntrada(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
 def TestaInterseccaoSaida(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
  DiferencaAbsoluta = abs(y - CoordenadaYLinhaSaida)
 	
- if ((DiferencaAbsoluta <= 5) and (y > CoordenadaYLinhaEntrada)):
+ if ((DiferencaAbsoluta <= 3) and (y > CoordenadaYLinhaEntrada)):
 	  return 1
  else:
    return 0
