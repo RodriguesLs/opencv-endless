@@ -53,7 +53,7 @@ def TestaInterseccaoSaida(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
   else:
     return 0
 
-camera = cv2.VideoCapture('/home/rodrigues/Documents/people-counting/videos/example_01.mp4')
+camera = cv2.VideoCapture(0)
 
 #forca a camera a ter resolucao 640x480
 camera.set(3,640)
@@ -110,7 +110,7 @@ while True:
   #Dessa forma, objetos detectados serao considerados uma "massa" de cor preta 
   #Alem disso, encontra os contornos apos dilatacao.
   FrameThresh = cv2.dilate(FrameThresh, None, iterations=2)
-  cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+  _, cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
   QtdeContornos = 0
 
   #desenha linhas de referencia 
@@ -191,9 +191,9 @@ while True:
   for pe in object_list:
     print(pe.id)
   #Se necessario, descomentar as lihas abaixo para mostrar os frames utilizados no processamento da imagem
-  # cv2.imshow("Frame binarizado", FrameThresh)
+#  cv2.imshow("Frame binarizado", FrameThresh)
   # cv2.waitKey(1);
-  # cv2.imshow("Frame com subtracao de background", FrameDelta)
+#  cv2.imshow("Frame com subtracao de background", FrameDelta)
   #cv2.waitKey(1);
 
 
