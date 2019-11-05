@@ -15,9 +15,8 @@ ThresholdBinarizacao = 70  #este valor eh empirico, Ajuste-o conforme sua necess
 OffsetLinhasRef = 30  #este valor eh empirico. Ajuste- conforme sua necessidade.
 object_list = []
 temp_id = 0
-QtdeContornos = 0
+QtdeContorno = 0
 id = 0
-
 
 def searchOnList(localization, object_list):
   x1, y1, x2, y2 = localization
@@ -40,21 +39,21 @@ def searchOnList(localization, object_list):
 def TestaInterseccaoEntrada(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
   DiferencaAbsoluta = abs(y - CoordenadaYLinhaEntrada)	
 
-  if ((DiferencaAbsoluta <= 3) and (y < CoordenadaYLinhaSaida)):
+  if ((DiferencaAbsoluta <= 10) and (y < CoordenadaYLinhaSaida)):
     return 1
   else:
     return 0
 
 # Verifica se o corpo detectado esta saindo da sona monitorada
 def TestaInterseccaoSaida(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
- DiferencaAbsoluta = abs(y - CoordenadaYLinhaSaida)
+  DiferencaAbsoluta = abs(y - CoordenadaYLinhaSaida)
 	
- if ((DiferencaAbsoluta <= 3) and (y > CoordenadaYLinhaEntrada)):
-	  return 1
- else:
-   return 0
+  if ((DiferencaAbsoluta <= 10) and (y > CoordenadaYLinhaEntrada)):
+    return 1
+  else:
+    return 0
 
-camera = cv2.VideoCapture('/home/pi/poc/people-counting-opencv/videos/example_01.mp4')
+camera = cv2.VideoCapture('/home/rodrigues/Documents/people-counting/videos/example_01.mp4')
 
 #forca a camera a ter resolucao 640x480
 camera.set(3,640)
@@ -111,14 +110,14 @@ while True:
   #Dessa forma, objetos detectados serao considerados uma "massa" de cor preta 
   #Alem disso, encontra os contornos apos dilatacao.
   FrameThresh = cv2.dilate(FrameThresh, None, iterations=2)
-  _, cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+  cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
   QtdeContornos = 0
 
   #desenha linhas de referencia 
   CoordenadaYLinhaEntrada = (height // 2)-OffsetLinhasRef
   CoordenadaYLinhaSaida = (height // 2)+OffsetLinhasRef
   cv2.line(Frame, (0,CoordenadaYLinhaEntrada), (width,CoordenadaYLinhaEntrada), (255, 0, 0), 2)
-  cv2.line(Frame, (0,CoordenadaYLinhaSaida), (width,CoordenadaYLinhaSaida), (0, 0, 255), 2)
+  #cv2.line(Frame, (0,CoordenadaYLinhaSaida), (width,CoordenadaYLinhaSaida), (0, 0, 255), 2)
 
 
   new_list = []
@@ -136,17 +135,22 @@ while True:
     (x, y, w, h) = cv2.boundingRect(c) #x e y: coordenadas do vertice superior esquerdo
                                         #w e h: respectivamente largura e altura do retangulo
     locale = (x, y, x+w, y+h)
+    
+    
 
     temp_id = searchOnList(locale, object_list)
       
     if temp_id is None:
-      print("NEW")
+      # print("NEW")
       id += 1
-      p = Person(id)
+      p = Person(id, locale)
       p.update_localization(locale)
+      init_locale = p.init_location
       new_list.append(p)
+     
     else:
-      print("OLD")
+      # print("OLD")
+      # print(p.last_localization)
       object_list[temp_id].update_localization(locale)
       new_list.append(object_list[temp_id])
 
@@ -162,23 +166,34 @@ while True:
     #testa interseccao dos centros dos contornos com as linhas de referencia
     #dessa forma, contabiliza-se quais contornos cruzaram quais linhas (num determinado sentido)
     if (TestaInterseccaoEntrada(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):
-      if p.checked is False:
-        ContadorEntradas += 1
-        p.checked = True
-    
+      (t1, t2, t3, t4) = locale
+      (t5, t6, t7, t8) = init_locale
+      # print("T2: "+str(t2))
+      # print("Init Location: "+str(init_locale))
+      # print("T6: "+str(t6))
+      # time.sleep(1)
+      # import pdb; pdb.set_trace()
+      if t6 < t2:
+        if p.checked is False:
+          ContadorEntradas += 1
+          p.checked = True
+        
+    # if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
+    #   (r1, r2, r3, r4) = p.last_localization[0]
+    #   (r5, r6, r7, r8) = p.last_localization[8]
+    #   if r2 > r6:
+    #     if p.checked is False:
+    #       ContadorSaidas += 1
+    #       p.checked = True
 
-    if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
-      if p.checked is False:
-        ContadorSaidas += 1
-        p.checked = True
 
   object_list = new_list
   for pe in object_list:
     print(pe.id)
   #Se necessario, descomentar as lihas abaixo para mostrar os frames utilizados no processamento da imagem
- # cv2.imshow("Frame binarizado", FrameThresh)
+  # cv2.imshow("Frame binarizado", FrameThresh)
   # cv2.waitKey(1);
- # cv2.imshow("Frame com subtracao de background", FrameDelta)
+  # cv2.imshow("Frame com subtracao de background", FrameDelta)
   #cv2.waitKey(1);
 
 
@@ -195,14 +210,9 @@ while True:
   for i in object_list:
     cv2.putText(Frame, "object_list: {}".format(len(object_list)), (10, 130),
         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-  #cv2.putText(Frame, "counter: {}".format(str(counter)), (10, 150),
-  #    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.imshow("Original", Frame)
 
-  #cv2.putText(Frame, "counter: {}".format(counter), (20, 50),
-  #    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   key = cv2.waitKey(1)
-
   if key == ord('q'):
     break
 
