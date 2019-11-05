@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 import time
 from person import Person
-# from centroidtracker import CentroidTraceker
 
 #Global variables
 width = 0
@@ -16,9 +15,8 @@ ThresholdBinarizacao = 70  #este valor eh empirico, Ajuste-o conforme sua necess
 OffsetLinhasRef = 10  #este valor eh empirico. Ajuste- conforme sua necessidade.
 object_list = []
 temp_id = 0
-id = 0
 QtdeContornos = 0
-counter = 0
+id = 0
 
 
 def searchOnList(localization, object_list):
@@ -47,14 +45,14 @@ def TestaInterseccaoEntrada(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
   else:
     return 0
 
-#Verifica se o corpo detectado esta saindo da sona monitorada
-#def TestaInterseccaoSaida(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
-#  DiferencaAbsoluta = abs(y - CoordenadaYLinhaSaida)
-#	
-#  if ((DiferencaAbsoluta <= 5) and (y > CoordenadaYLinhaEntrada)):
-#	  return 1
-#  else:
-#    return 0
+# Verifica se o corpo detectado esta saindo da sona monitorada
+def TestaInterseccaoSaida(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
+ DiferencaAbsoluta = abs(y - CoordenadaYLinhaSaida)
+	
+ if ((DiferencaAbsoluta <= 5) and (y > CoordenadaYLinhaEntrada)):
+	  return 1
+ else:
+   return 0
 
 camera = cv2.VideoCapture('/home/pi/poc/people-counting-opencv/videos/example_01.mp4')
 
@@ -71,7 +69,7 @@ for i in range(0,20):
   (grabbed, Frame) = camera.read()
 
 while True:
-  counter += 1
+  # counter += 1
   #le primeiro frame e determina resolucao da imagem
   t = time.time()
   (grabbed, Frame) = camera.read()
@@ -92,7 +90,7 @@ while True:
   FrameGray = cv2.cvtColor(Frame, cv2.COLOR_BGR2GRAY)
 #  cv2.imshow("gray", FrameGray)
   # FrameGray = cv2.GaussianBlur(FrameGray, (21, 21), 0)
-  FrameGray = cv2.blur(FrameGray, (11, 11), 0)
+  FrameGray = cv2.GaussianBlur(FrameGray, (11, 11), 0)
 #  cv2.imshow("gray2", FrameGray)
 
   # if counter == 821:
@@ -169,8 +167,8 @@ while True:
         p.checked = True
     
 
-    # if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
-    #   ContadorSaidas += 1
+    if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
+      ContadorSaidas += 1
   
 
   object_list = new_list
