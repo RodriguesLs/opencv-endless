@@ -168,8 +168,9 @@ while True:
     
 
     if (TestaInterseccaoSaida(CoordenadaYCentroContorno,CoordenadaYLinhaEntrada,CoordenadaYLinhaSaida)):  
-      ContadorSaidas += 1
-  
+      if p.checked is False:
+        ContadorSaidas += 1
+        p.checked = True
 
   object_list = new_list
   for pe in object_list:
@@ -194,12 +195,12 @@ while True:
   for i in object_list:
     cv2.putText(Frame, "object_list: {}".format(len(object_list)), (10, 130),
         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-  cv2.putText(Frame, "counter: {}".format(str(counter)), (10, 150),
-      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+  #cv2.putText(Frame, "counter: {}".format(str(counter)), (10, 150),
+  #    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   cv2.imshow("Original", Frame)
 
-  cv2.putText(Frame, "counter: {}".format(counter), (20, 50),
-      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+  #cv2.putText(Frame, "counter: {}".format(counter), (20, 50),
+  #    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
   key = cv2.waitKey(1)
 
   if key == ord('q'):
