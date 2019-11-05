@@ -13,14 +13,12 @@ ContadorEntradas = 0
 ContadorSaidas = 0
 AreaContornoLimiteMin = 3000  #este valor eh empirico. Ajuste-o conforme sua necessidade 
 ThresholdBinarizacao = 70  #este valor eh empirico, Ajuste-o conforme sua necessidade
-OffsetLinhasRef = 130  #este valor eh empirico. Ajuste- conforme sua necessidade.
+OffsetLinhasRef = 10  #este valor eh empirico. Ajuste- conforme sua necessidade.
 object_list = []
 temp_id = 0
 id = 0
 QtdeContornos = 0
 counter = 0
-# ct = CentroidTracker()
-# (H, W) = (None, None)
 
 
 def searchOnList(localization, object_list):
@@ -44,21 +42,21 @@ def searchOnList(localization, object_list):
 def TestaInterseccaoEntrada(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
   DiferencaAbsoluta = abs(y - CoordenadaYLinhaEntrada)	
 
-  if ((DiferencaAbsoluta <= 2) and (y < CoordenadaYLinhaSaida)):
+  if ((DiferencaAbsoluta <= 5) and (y < CoordenadaYLinhaSaida)):
     return 1
   else:
     return 0
 
 #Verifica se o corpo detectado esta saindo da sona monitorada
-def TestaInterseccaoSaida(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
-  DiferencaAbsoluta = abs(y - CoordenadaYLinhaSaida)
-	
-  if ((DiferencaAbsoluta <= 2) and (y > CoordenadaYLinhaEntrada)):
-	  return 1
-  else:
-    return 0
+#def TestaInterseccaoSaida(y, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
+#  DiferencaAbsoluta = abs(y - CoordenadaYLinhaSaida)
+#	
+#  if ((DiferencaAbsoluta <= 5) and (y > CoordenadaYLinhaEntrada)):
+#	  return 1
+#  else:
+#    return 0
 
-camera = cv2.VideoCapture("/home/rodrigues/Documents/people-counting/videos/test_video.h264")
+camera = cv2.VideoCapture('/home/pi/poc/people-counting-opencv/videos/example_01.mp4')
 
 #forca a camera a ter resolucao 640x480
 camera.set(3,640)
@@ -77,9 +75,10 @@ while True:
   #le primeiro frame e determina resolucao da imagem
   t = time.time()
   (grabbed, Frame) = camera.read()
-
-  if counter < 820:
-    continue
+#  if counter % 2 == 0:
+#    continue
+#  if counter < 820:
+#    continue
   # Frame = cv2.imread("img_test.jpg")
   # Frame = cv2.resize(Frame, (640, 480))
   height = np.size(Frame,0)
@@ -91,10 +90,10 @@ while True:
 
   #converte frame para escala de cinza e aplica efeito blur (para realcar os contornos)
   FrameGray = cv2.cvtColor(Frame, cv2.COLOR_BGR2GRAY)
-  cv2.imshow("gray", FrameGray)
+#  cv2.imshow("gray", FrameGray)
   # FrameGray = cv2.GaussianBlur(FrameGray, (21, 21), 0)
   FrameGray = cv2.blur(FrameGray, (11, 11), 0)
-  cv2.imshow("gray2", FrameGray)
+#  cv2.imshow("gray2", FrameGray)
 
   # if counter == 821:
   #   import pdb; pdb.set_trace()
@@ -114,7 +113,7 @@ while True:
   #Dessa forma, objetos detectados serao considerados uma "massa" de cor preta 
   #Alem disso, encontra os contornos apos dilatacao.
   FrameThresh = cv2.dilate(FrameThresh, None, iterations=2)
-  cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+  _, cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
   QtdeContornos = 0
 
   #desenha linhas de referencia 
@@ -178,9 +177,9 @@ while True:
   for pe in object_list:
     print(pe.id)
   #Se necessario, descomentar as lihas abaixo para mostrar os frames utilizados no processamento da imagem
-  cv2.imshow("Frame binarizado", FrameThresh)
+ # cv2.imshow("Frame binarizado", FrameThresh)
   # cv2.waitKey(1);
-  cv2.imshow("Frame com subtracao de background", FrameDelta)
+ # cv2.imshow("Frame com subtracao de background", FrameDelta)
   #cv2.waitKey(1);
 
 
